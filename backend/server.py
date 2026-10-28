@@ -116,7 +116,7 @@ def inspect_database(module):
         return {"module": module, "database_file": DBS[module].name, "tables": result, "foreign_key_errors": fk_errors}
 
 def fetch_online_products(qty):
-    """Obtém produtos de uma API pública de demonstração (DummyJSON)."""
+    """Obtém produtos de uma API pública (DummyJSON)."""
     url = f"https://dummyjson.com/products?limit={min(qty, 194)}&skip=0&select=title,description,price,stock,category"
     request = urllib.request.Request(url, headers={"User-Agent": "DataForge/1.0 (academic data seeding)", "Accept": "application/json"})
     try:
@@ -160,7 +160,7 @@ def seed_shop(con, qty, origin="sintetico", online_products=None):
     for i in range(synthetic_qty):
         category = random.choice(category_names)
         con.execute("INSERT INTO produtos(nome, preco, stock, categoria_id, descricao, origem_dados) VALUES(?,?,?,?,?,?)",
-                    (f"Produto sintético {existing_products+i+1:04d}", round(random.uniform(1500, 85000), 2), random.randint(0, 150), category_ids[category], "Produto de demonstração gerado pelo DataForge.", "sintetico"))
+                    (f"Produto sintético {existing_products+i+1:04d}", round(random.uniform(1500, 85000), 2), random.randint(0, 150), category_ids[category], "Produto gerado pelo DataForge.", "sintetico"))
     # Clientes e encomendas são sempre sintéticos; não importamos dados pessoais da Internet.
     client_ids = []
     for _ in range(qty):
@@ -329,11 +329,11 @@ class Handler(SimpleHTTPRequestHandler):
                 counts = {t: after[t]-before.get(t,0) for t in after}
                 total = sum(counts.values())
             report_id = str(uuid.uuid4())
-            details = {"database_file": DBS[module].name, "table_counts": counts, "foreign_key_errors": len(fk_errors), "imported_online": imported_online, "generated_synthetic_products": generated_synthetic, "source": "DummyJSON API (dados de demonstração)" if imported_online else "DataForge", "message":"Execução concluída; chaves estrangeiras verificadas."}
+            details = {"database_file": DBS[module].name, "table_counts": counts, "foreign_key_errors": len(fk_errors), "imported_online": imported_online, "generated_synthetic_products": generated_synthetic, "source": "DummyJSON API" if imported_online else "DataForge", "message":"Execução concluída; chaves estrangeiras verificadas."}
             with connect("dataforge") as con:
                 con.execute("INSERT INTO execucoes VALUES(?,?,?,?,?,?,?,?)",
                             (report_id,module,qty,origin,"concluída",total,json.dumps(details,ensure_ascii=False),started))
-            return self.send_json(201, {"id":report_id,"module":module,"quantity":qty,"origin":origin,"status":"concluída","total_records_inserted":total,"table_counts":counts,"foreign_key_errors":len(fk_errors),"created_at":started,"database_file":DBS[module].name,"imported_online":imported_online,"generated_synthetic_products":generated_synthetic,"source":"DummyJSON API (dados de demonstração)" if imported_online else "DataForge"})
+            return self.send_json(201, {"id":report_id,"module":module,"quantity":qty,"origin":origin,"status":"concluída","total_records_inserted":total,"table_counts":counts,"foreign_key_errors":len(fk_errors),"created_at":started,"database_file":DBS[module].name,"imported_online":imported_online,"generated_synthetic_products":generated_synthetic,"source":"DummyJSON API" if imported_online else "DataForge"})
         except Exception as e:
             return self.send_json(500, {"error":str(e)})
 

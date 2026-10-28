@@ -53,7 +53,7 @@ function generatePage() {
         <div class="form-grid">
           <div class="field"><label for="module">Base de dados de destino</label><select id="module"><option value="loja_db">Loja Online - loja.db</option><option value="escola_db">Sistema Escolar - escola.db</option></select><div class="hint">A API inspecciona as tabelas e as relações da base seleccionada.</div></div>
           <div class="field"><label for="quantity">Quantidade de registos principais</label><input id="quantity" type="number" min="1" max="5000" value="100" required><div class="hint">Valor permitido: 1 a 5000. As tabelas dependentes podem aumentar o total inserido.</div></div>
-          <div class="field"><label for="origin">Origem dos dados</label><select id="origin"><option value="sintetico">Dados sintéticos</option><option value="internet">Internet - produtos da API DummyJSON</option><option value="misto">Misto - Internet + sintéticos</option></select><div class="hint">Internet/Misto aplica-se à Loja Online. Usa a API pública DummyJSON (dados de demonstração); o Sistema Escolar aceita apenas dados sintéticos.</div></div>
+          <div class="field"><label for="origin">Origem dos dados</label><select id="origin"><option value="sintetico">Dados sintéticos</option><option value="internet">Internet - produtos da API DummyJSON</option><option value="misto">Misto - Internet + sintéticos</option></select><div class="hint">Internet/Misto aplica-se à Loja Online. Usa a API pública DummyJSON; o Sistema Escolar aceita apenas dados sintéticos.</div></div>
           <div class="field"><label>Integridade</label><input value="Chaves estrangeiras activadas + transacção" disabled><div class="hint">Se uma validação falhar, a transacção não deve ser considerada concluída.</div></div>
         </div>
         <div class="form-actions"><button class="btn btn-primary" id="run-btn" type="submit">▶ Executar alimentação</button></div>
@@ -74,7 +74,7 @@ function generatePage() {
     const module = $("#module").value, quantity = Number($("#quantity").value), origin = $("#origin").value;
     const phases = [
       { at: 0, title: "A preparar a execução", detail: "A confirmar o módulo e os parâmetros seleccionados." },
-      { at: 10000, title: origin === "internet" ? "A recolher dados da Internet" : "A gerar dados", detail: origin === "internet" ? "A consultar a fonte de demonstração e a organizar os resultados." : "A criar registos e a preparar os dados relacionados." },
+      { at: 10000, title: origin === "internet" ? "A recolher dados da Internet" : "A gerar dados", detail: origin === "internet" ? "A consultar a fonte de dados web e a organizar os resultados." : "A criar registos e a preparar os dados relacionados." },
       { at: 24000, title: "A validar os dados", detail: "A verificar campos obrigatórios e relações entre registos." },
       { at: 39000, title: "A inserir nas tabelas", detail: "A guardar os registos na base de dados SQLite." },
       { at: 52000, title: "A finalizar a execução", detail: "A confirmar a integridade e a preparar o relatório." }
